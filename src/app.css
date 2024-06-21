@@ -78,6 +78,31 @@ button:focus-visible {
   }
 } */
 
+@font-face {
+  font-family: 'Valorant';
+  src: url('/fonts/valorant.ttf');
+}
+
+@font-face {
+  font-family: 'The Future';
+  src: url('/fonts/the-future-mono-regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'The Future';
+  src: url('/fonts/the-future-mono-bold.woff2') format('woff2');
+  font-weight: bold;
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
 	margin: 0;
 }

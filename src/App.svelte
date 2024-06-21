@@ -2,7 +2,9 @@
 	import { onMount } from 'svelte';
 	import colorsData from './data/colors.json';
 
-	let selectedGun = 'champions_2023';
+	let keys = Object.keys(colorsData);
+	console.log(keys);
+	let selectedGun = keys[(keys.length * Math.random()) << 0];
 	let colors = [];
 
 	let pixelated = false;
@@ -207,35 +209,22 @@
 		cursor: pointer;
 	}
 
-	/* .row:active {
-		cursor: grab;
-		border: 5px solid #4caf50;
-		transition: border 0.1s ease-in-out;
-	} */
-
 	.color-hex {
 		user-select: none;
 		position: absolute;
 		top: 50%;
-		left: 10px; /* Adjust this value to move it further left or right */
+		left: 10px;
 		transform: translateY(-50%);
-		border-radius: 3px;
-		font-size: 16px; /* Increased font size */
-		font-family: monospace; /* Monospace font */
-		white-space: nowrap;
-		opacity: 0;
-		transition: opacity 0.1s ease-in-out;
-	}
-
-	.row:hover .color-hex {
-		opacity: 1;
+		font-size: 15px;
+		font-family: 'The Future', monospace;
+		font-weight: bold;
 	}
 
 	.dropdown {
 		position: absolute;
 		top: 20px;
 		right: 20px;
-		width: 250px;
+		max-width: 300px;
 	}
 
 	.dropdown select {
@@ -245,6 +234,7 @@
 		border: 5px solid #333;
 		background-color: #fff;
 		cursor: pointer;
+		font-family: 'Valorant';
 	}
 
 	.dropdown select:focus {
