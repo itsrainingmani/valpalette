@@ -1,10 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import colorsData from './data/colors.json';
+	import { selectedGun } from './stores';
 
 	let keys = Object.keys(colorsData);
-	console.log(keys);
-	let selectedGun = keys[(keys.length * Math.random()) << 0];
 	let colors = [];
 
 	let pixelated = false;
@@ -46,14 +45,23 @@
 	}
 
 	onMount(() => {
-		if (selectedGun) {
-			colors = colorsData[selectedGun]?.colors || [];
+		if (location.hash.length > 1) {
+			let stateParams = location.hash.slice(1).split('|');
+
+			// Set the state
+			console.log(stateParams);
+			$selectedGun = stateParams[0];
+		} else {
+			$selectedGun = keys[(keys.length * Math.random()) << 0];
+		}
+		if ($selectedGun) {
+			colors = colorsData[$selectedGun]?.colors || [];
 			console.log(colors);
 		}
 	});
 
 	$: if (selectedGun) {
-		colors = colorsData[selectedGun]?.colors || [];
+		colors = colorsData[$selectedGun]?.colors || [];
 		console.log(colors);
 	}
 </script>
@@ -79,14 +87,21 @@
 		<div class="image-container">
 			<img
 				id="gun-image"
-				src={`${import.meta.env.BASE_URL}/${pixelated ? 'pixelated' : 'skins'}/${colorsData[selectedGun]?.type}/${selectedGun}.png`}
-				alt={selectedGun}
+				src={`${import.meta.env.BASE_URL}/${pixelated ? 'pixelated' : 'skins'}/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
+				alt={$selectedGun}
 				style="pointer-events: auto;"
 			/>
 		</div>
 	</div>
 	<div class="dropdown">
-		<select id="guns" name="weapon_name" bind:value={selectedGun}>
+		<select
+			id="guns"
+			name="weapon_name"
+			bind:value={$selectedGun}
+			on:change={() => {
+				location.hash = $selectedGun;
+			}}
+		>
 			<option value="">Select a gun</option>
 			<option value="abyssal">Abyssal</option>
 			<option value="altitude">Altitude</option>
