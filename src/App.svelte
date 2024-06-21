@@ -79,7 +79,7 @@
 		<div class="image-container">
 			<img
 				id="gun-image"
-				src={`/${pixelated ? 'pixelated' : 'skins'}/${colorsData[selectedGun]?.type}/${selectedGun}.png`}
+				src={`${import.meta.env.BASE_URL}/${pixelated ? 'pixelated' : 'skins'}/${colorsData[selectedGun]?.type}/${selectedGun}.png`}
 				alt={selectedGun}
 				style="pointer-events: auto;"
 			/>
