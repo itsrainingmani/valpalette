@@ -3,9 +3,7 @@
 	import colorsData from './data/colors.json';
 	import { selectedGun } from './stores';
 
-	let keys = Object.keys(colorsData);
 	let colors = [];
-
 	let pixelated = false;
 
 	function onKeyPress(e) {
@@ -47,22 +45,19 @@
 	onMount(() => {
 		if (location.hash.length > 1) {
 			let stateParams = location.hash.slice(1).split('|');
-
-			// Set the state
-			console.log(stateParams);
 			$selectedGun = stateParams[0];
 		} else {
+			let keys = Object.keys(colorsData);
 			$selectedGun = keys[(keys.length * Math.random()) << 0];
+			location.hash = $selectedGun;
 		}
 		if ($selectedGun) {
 			colors = colorsData[$selectedGun]?.colors || [];
-			console.log(colors);
 		}
 	});
 
 	$: if (selectedGun) {
 		colors = colorsData[$selectedGun]?.colors || [];
-		console.log(colors);
 	}
 </script>
 
