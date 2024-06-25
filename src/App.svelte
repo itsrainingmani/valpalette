@@ -69,7 +69,7 @@ $: if (selectedGun) {
 					on:click={() => copyToClipboard(color)}
 				>
 					<span class="color-hex" style={`color: ${calcFontColor(color)}`}
-						>{color.toUpperCase()}</span
+						>{color.toUpperCase()}{" "}<span class="copy-msg" style={`color: ${calcFontColor(color)}`}>copied to clipboard</span></span
 					>
 				</div>
 			{/each}
@@ -136,6 +136,24 @@ $: if (selectedGun) {
 		font-weight: bold;
 	}
 
+	.copy-msg {
+    font-size: 11px;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+  }
+
+  .row:active .copy-msg {
+    opacity: 1;
+    animation: fadeOut 2s forwards;
+    animation-delay: 0.2s;
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
 	.dropdown {
 		position: absolute;
 		top: 20px;
@@ -151,7 +169,21 @@ $: if (selectedGun) {
 		background-color: #fff;
 		cursor: pointer;
 		font-family: "Valorant";
+		appearance: none;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
+
+	.dropdown::after {
+    content: '\25BC';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
 
 	.dropdown select:focus {
 		outline: none;
