@@ -1,65 +1,60 @@
 <script>
-	import { onMount } from 'svelte';
-	import colorsData from './data/colors.json';
-	import weaponNames from './data/skin_names.json';
-	import { selectedGun } from './stores';
+import { onMount } from "svelte";
+import colorsData from "./data/colors.json";
+import weaponNames from "./data/skin_names.json";
+import { selectedGun } from "./stores";
 
-	let colors = [];
-	let pixelated = false;
+let colors = [];
+let pixelated = false;
 
-	function onKeyPress(e) {
-		if (e.key === 'p') {
-			pixelated = !pixelated;
-		}
+function onKeyPress(e) {
+	if (e.key === "p") {
+		pixelated = !pixelated;
 	}
+}
 
-	/**
-	 * @param {string} hex_color
-	 */
-	function calcFontColor(hex_color) {
-		var rgb = hex_color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-		rgb.shift();
-		rgb = rgb.map(function (x) {
-			return parseInt(x, 16);
-		});
-		console.log(rgb);
-		var sum = Math.round(
-			(parseInt(rgb[0]) * 299 +
-				parseInt(rgb[1]) * 587 +
-				parseInt(rgb[2]) * 114) /
-				1000
-		);
-		return sum > 128 ? 'black' : 'white';
+function calcFontColor(hex_color) {
+	let rgb = hex_color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+	rgb.shift();
+	rgb = rgb.map((x) => Number.parseInt(x, 16));
+	console.log(rgb);
+	const sum = Math.round(
+		(Number.parseInt(rgb[0]) * 299 +
+			Number.parseInt(rgb[1]) * 587 +
+			Number.parseInt(rgb[2]) * 114) /
+			1000,
+	);
+	return sum > 128 ? "black" : "white";
+}
+
+function copyToClipboard(text) {
+	navigator.clipboard.writeText(text).then(
+		() => {
+			console.log("Color copied to clipboard!");
+		},
+		(err) => {
+			console.error("Could not copy text: ", err);
+		},
+	);
+}
+
+onMount(() => {
+	if (location.hash.length > 1) {
+		const stateParams = location.hash.slice(1).split("|");
+		$selectedGun = stateParams[0];
+	} else {
+		const keys = Object.keys(colorsData);
+		$selectedGun = keys[(keys.length * Math.random()) << 0];
+		location.hash = $selectedGun;
 	}
-
-	function copyToClipboard(text) {
-		navigator.clipboard.writeText(text).then(
-			() => {
-				console.log('Color copied to clipboard!');
-			},
-			(err) => {
-				console.error('Could not copy text: ', err);
-			}
-		);
-	}
-
-	onMount(() => {
-		if (location.hash.length > 1) {
-			let stateParams = location.hash.slice(1).split('|');
-			$selectedGun = stateParams[0];
-		} else {
-			let keys = Object.keys(colorsData);
-			$selectedGun = keys[(keys.length * Math.random()) << 0];
-			location.hash = $selectedGun;
-		}
-		if ($selectedGun) {
-			colors = colorsData[$selectedGun]?.colors || [];
-		}
-	});
-
-	$: if (selectedGun) {
+	if ($selectedGun) {
 		colors = colorsData[$selectedGun]?.colors || [];
 	}
+});
+
+$: if (selectedGun) {
+	colors = colorsData[$selectedGun]?.colors || [];
+}
 </script>
 
 <main>
@@ -83,7 +78,7 @@
 		<div class="image-container">
 			<img
 				id="gun-image"
-				src={`${import.meta.env.BASE_URL}/${pixelated ? 'pixelated' : 'skins'}/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
+				src={`${import.meta.env.BASE_URL}/${pixelated ? "pixelated" : "skins"}/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
 				alt={$selectedGun}
 				style="pointer-events: auto;"
 			/>
@@ -98,10 +93,10 @@
 				location.hash = $selectedGun;
 			}}
 		>
-		<option value="">Select a gun</option>
+			<option value="">Select a gun</option>
 			{#each Object.entries(weaponNames) as [smol_name, canonical_name]}
-		<option value={smol_name}>{canonical_name}</option>
-		{/each}
+				<option value={smol_name}>{canonical_name}</option>
+			{/each}
 		</select>
 	</div>
 </main>
@@ -114,16 +109,12 @@
 		flex-direction: column-reverse;
 		height: 100vh;
 	}
+
 	.image-container {
 		position: fixed;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		pointer-events: none;
-	}
-
-	#gun-image {
-		pointer-events: auto;
 	}
 
 	.row {
@@ -142,7 +133,7 @@
 		left: 10px;
 		transform: translateY(-50%);
 		font-size: 15px;
-		font-family: 'The Future', monospace;
+		font-family: "The Future", monospace;
 		font-weight: bold;
 	}
 
@@ -160,7 +151,7 @@
 		border: 5px solid #333;
 		background-color: #fff;
 		cursor: pointer;
-		font-family: 'Valorant';
+		font-family: "Valorant";
 	}
 
 	.dropdown select:focus {
