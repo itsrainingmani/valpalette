@@ -22,7 +22,6 @@ def process_skin_type(skin_type):
     big_vals = {v: k for k, v in big_names.items()}
 
     name_map = {smol_vals[url]: big_vals[url] for url in all_urls}
-    name_map = dict(sorted(name_map.items()))
 
     return name_map
 
@@ -31,5 +30,6 @@ vandals = process_skin_type("vandal")
 phantoms = process_skin_type("phantom")
 
 all_skins = {**vandals, **phantoms}
+all_skins = dict(sorted(all_skins.items()))
 all_skins_json = json.dumps(all_skins, indent=4)
 pprint(all_skins_json)
