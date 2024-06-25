@@ -17,7 +17,6 @@ function calcFontColor(hex_color) {
 	let rgb = hex_color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
 	rgb.shift();
 	rgb = rgb.map((x) => Number.parseInt(x, 16));
-	console.log(rgb);
 	const sum = Math.round(
 		(Number.parseInt(rgb[0]) * 299 +
 			Number.parseInt(rgb[1]) * 587 +
@@ -70,7 +69,7 @@ $: if (selectedGun) {
 					on:click={() => copyToClipboard(color)}
 				>
 					<span class="color-hex" style={`color: ${calcFontColor(color)}`}
-						>{color}</span
+						>{color.toUpperCase()}</span
 					>
 				</div>
 			{/each}
@@ -80,7 +79,7 @@ $: if (selectedGun) {
 				id="gun-image"
 				src={`${import.meta.env.BASE_URL}/${pixelated ? "pixelated" : "skins"}/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
 				alt={$selectedGun}
-				style="pointer-events: auto;"
+				width="100%"
 			/>
 		</div>
 	</div>
