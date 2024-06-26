@@ -3,7 +3,7 @@
   import { tweened } from "svelte/motion";
   export let color = "#fff";
   export let color_width = 100;
-  const progress = tweened(0, {
+  const progress = tweened(color_width, {
     duration: 500,
     easing: quadInOut,
   });

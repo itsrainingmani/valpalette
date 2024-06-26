@@ -2,15 +2,14 @@
 	import { onMount } from "svelte";
 	import colorsData from "./data/colors.json";
 	import weaponNames from "./data/skin_names.json";
-	import { selectedGun } from "./stores";
+	import { selectedGun, showPercent } from "./stores";
 	import ColorRow from "./ColorRow.svelte";
 
 	let colors = [];
-	let percentage = false;
 
 	function onKeyPress(e) {
 		if (e.key === "p") {
-			percentage = !percentage;
+			showPercent.set(!$showPercent);
 		}
 	}
 
@@ -37,7 +36,7 @@
 	<div id="horizontal-bars">
 		<div class="container" id="palette-cols">
 			{#each Object.entries(colors) as [color, proportion]}
-				<ColorRow {color} color_width={percentage ? proportion : 100} />
+				<ColorRow {color} color_width={$showPercent ? proportion : 100} />
 			{/each}
 		</div>
 		<div class="image-container">
