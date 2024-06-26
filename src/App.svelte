@@ -1,83 +1,49 @@
 <script>
-import { onMount } from "svelte";
-import colorsData from "./data/colors.json";
-import weaponNames from "./data/skin_names.json";
-import { selectedGun } from "./stores";
+	import { onMount } from "svelte";
+	import colorsData from "./data/colors.json";
+	import weaponNames from "./data/skin_names.json";
+	import { selectedGun } from "./stores";
+	import ColorRow from "./ColorRow.svelte";
 
-let colors = [];
-let pixelated = false;
+	let colors = [];
+	let percentage = false;
 
-function onKeyPress(e) {
-	if (e.key === "p") {
-		pixelated = !pixelated;
+	function onKeyPress(e) {
+		if (e.key === "p") {
+			percentage = !percentage;
+		}
 	}
-}
 
-function calcFontColor(hex_color) {
-	let rgb = hex_color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-	rgb.shift();
-	rgb = rgb.map((x) => Number.parseInt(x, 16));
-	const sum = Math.round(
-		(Number.parseInt(rgb[0]) * 299 +
-			Number.parseInt(rgb[1]) * 587 +
-			Number.parseInt(rgb[2]) * 114) /
-			1000,
-	);
-	return sum > 128 ? "black" : "white";
-}
+	onMount(() => {
+		if (location.hash.length > 1) {
+			const stateParams = location.hash.slice(1).split("|");
+			$selectedGun = stateParams[0];
+		} else {
+			const keys = Object.keys(colorsData);
+			$selectedGun = keys[(keys.length * Math.random()) << 0];
+			location.hash = $selectedGun;
+		}
+		if ($selectedGun) {
+			colors = colorsData[$selectedGun]?.colors || [];
+		}
+	});
 
-function copyToClipboard(text) {
-	navigator.clipboard.writeText(text).then(
-		() => {
-			console.log("Color copied to clipboard!");
-		},
-		(err) => {
-			console.error("Could not copy text: ", err);
-		},
-	);
-}
-
-onMount(() => {
-	if (location.hash.length > 1) {
-		const stateParams = location.hash.slice(1).split("|");
-		$selectedGun = stateParams[0];
-	} else {
-		const keys = Object.keys(colorsData);
-		$selectedGun = keys[(keys.length * Math.random()) << 0];
-		location.hash = $selectedGun;
-	}
-	if ($selectedGun) {
+	$: if (selectedGun) {
 		colors = colorsData[$selectedGun]?.colors || [];
 	}
-});
-
-$: if (selectedGun) {
-	colors = colorsData[$selectedGun]?.colors || [];
-}
 </script>
 
 <main>
 	<div id="horizontal-bars">
 		<div class="container" id="palette-cols">
-			{#each colors as color, i}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div
-					class="row"
-					style="background-color: {colors[i] || '#ffffff'}"
-					title={color}
-					on:click={() => copyToClipboard(color)}
-				>
-					<span class="color-hex" style={`color: ${calcFontColor(color)}`}
-						>{color.toUpperCase()}{" "}<span class="copy-msg" style={`color: ${calcFontColor(color)}`}>copied to clipboard</span></span
-					>
-				</div>
+			{#each Object.entries(colors) as [color, proportion]}
+				<ColorRow {color} color_width={percentage ? proportion : 100} />
 			{/each}
 		</div>
 		<div class="image-container">
 			<img
 				id="gun-image"
-				src={`${import.meta.env.BASE_URL}/${pixelated ? "pixelated" : "skins"}/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
+				src={`${import.meta.env.BASE_URL}/skins/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
 				alt={$selectedGun}
 				width="100%"
 			/>
@@ -116,44 +82,6 @@ $: if (selectedGun) {
 		transform: translate(-50%, -50%);
 	}
 
-	.row {
-		position: relative;
-		height: auto;
-	}
-
-	.row:hover {
-		cursor: pointer;
-	}
-
-	.color-hex {
-		user-select: none;
-		position: absolute;
-		top: 50%;
-		left: 10px;
-		transform: translateY(-50%);
-		font-size: 15px;
-		font-family: "The Future", monospace;
-		font-weight: bold;
-	}
-
-	.copy-msg {
-    font-size: 11px;
-    font-style: italic;
-    opacity: 0;
-    transition: opacity 0.1s ease-in-out;
-  }
-
-  .row:active .copy-msg {
-    opacity: 1;
-    animation: fadeOut 2s forwards;
-    animation-delay: 0.2s;
-  }
-
-  @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-  }
-
 	.dropdown {
 		position: absolute;
 		top: 20px;
@@ -177,13 +105,13 @@ $: if (selectedGun) {
 	}
 
 	.dropdown::after {
-    content: '\25BC';
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
+		content: "\25BC";
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+		pointer-events: none;
+	}
 
 	.dropdown select:focus {
 		outline: none;

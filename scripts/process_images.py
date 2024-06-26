@@ -1,14 +1,16 @@
 import json
 import os
 import pathlib
+from collections import Counter
+
 import cv2
 import numpy as np
 from sklearn.cluster import KMeans
-from collections import Counter
 
 
 def convert_to_hex(rgb):
-    return "#{:02x}{:02x}{:02x}".format(int(rgb[0]), int(rgb[1]), int(rgb[2]))
+    [r, g, b] = [int(x) for x in rgb]
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def extract_distinct_colors(image_path, num_colors=10):
@@ -30,16 +32,22 @@ def extract_distinct_colors(image_path, num_colors=10):
 
     # Sort the colors based on their frequency (most frequent first)
     sorted_colors = sorted(color_counts.items(), key=lambda x: x[1], reverse=True)
+    sum_of_freqs = sum([x[1] for x in sorted_colors])
 
     # Get the RGB values of the most distinct colors
     distinct_colors = {
-        convert_to_hex(kmeans.cluster_centers_[color[0]].astype(int)): color[1]
+        convert_to_hex(kmeans.cluster_centers_[color[0]].astype(int)): (
+            color[1] / sum_of_freqs
+        )
+        * 100
         for color in sorted_colors
     }
-
-    print(distinct_colors)
-
+    distinct_sorted_colors = dict(
+        sorted(distinct_colors.items(), key=lambda item: item[1], reverse=True)
+    )
     # return {f"#{r:02x}{g:02x}{b:02x}" for [r, g, b] in distinct_colors}
+
+    return distinct_sorted_colors
 
 
 def process_directory(directory, gun_type):
@@ -51,10 +59,11 @@ def process_directory(directory, gun_type):
                 print(f"---- {file}")
                 file_path = os.path.join(root, file)
                 colors = extract_distinct_colors(file_path, num_colors=7)
-                # color_data[pathlib.Path(file).stem] = {
-                #     "type": gun_type,
-                #     "colors": colors,
-                # }
+                print(colors)
+                color_data[pathlib.Path(file).stem] = {
+                    "type": gun_type,
+                    "colors": colors,
+                }
     return color_data
 
 
@@ -69,9 +78,8 @@ def main():
         else:
             print(f"Directory '{directory}' does not exist.")
 
-    print(all_colors)
-    # with open("colors.json", "w") as json_file:
-    #     json.dump(all_colors, json_file, indent=4)
+    with open("colors.json", "w") as json_file:
+        json.dump(all_colors, json_file, indent=4)
 
 
 if __name__ == "__main__":
