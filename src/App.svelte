@@ -42,7 +42,7 @@
 		<div class="image-container">
 			<img
 				id="gun-image"
-				src={`${import.meta.env.BASE_URL}/skins/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
+				src={`/skins/${colorsData[$selectedGun]?.type}/${$selectedGun}.png`}
 				alt={$selectedGun}
 				width="100%"
 			/>
